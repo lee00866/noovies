@@ -7,7 +7,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import Root from "./navigation/Root";
 import { ThemeProvider } from "styled-components";
 import { darkTheme, lightTheme } from "./styled";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+const queryClient = new QueryClient();
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -27,12 +29,14 @@ export default function App() {
   const isDark = useColorScheme() === "dark";
   if (!isReady) return null;
   return (
-    <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
-      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-        <NavigationContainer>
-          <Root />
-        </NavigationContainer>
-      </View>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+        <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+          <NavigationContainer>
+            <Root />
+          </NavigationContainer>
+        </View>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }

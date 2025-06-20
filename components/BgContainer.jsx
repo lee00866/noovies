@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "styled-components/native";
 import { useColorScheme } from "react-native";
 import { BLACK_COLOR } from "../colors";
 

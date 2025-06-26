@@ -1,13 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Dimensions,
-  FlatList,
-  RefreshControl,
-  Text,
-  useColorScheme,
-  View,
-} from "react-native";
+import { Dimensions, FlatList, useColorScheme } from "react-native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Swiper from "react-native-swiper";
 import styled from "styled-components/native";
@@ -16,13 +8,7 @@ import Slide from "../components/Slide";
 import VMedia from "../components/VMedia";
 import HMedia from "../components/HMedia";
 import { moviesApi } from "../api";
-
-const Loader = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  background-color: ${(props) => props.bgColor};
-`;
+import Loader from "../components/Loader";
 
 //const SCREEN_HEIGHT = Dimension.get("window").height와 같지만 아래의 경우 width도 추가할 수 있어서 아래가 낫다
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -110,9 +96,7 @@ const Movies = () => {
     isRefetchingNowPlaying || isRefetchingUpcoming || isRefetchingTrending;
 
   return loading ? (
-    <Loader bgColor={backgroundColor}>
-      <ActivityIndicator />
-    </Loader>
+    <Loader />
   ) : upcomingData ? (
     <FlatList
       style={{ backgroundColor }}

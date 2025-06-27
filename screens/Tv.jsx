@@ -4,8 +4,7 @@ import { useColorScheme } from "react-native";
 import { BLACK_COLOR } from "../colors";
 import { tvApi } from "../api";
 import Loader from "../components/Loader";
-import VMedia from "../components/VMedia";
-import HList, { HListSeparator } from "../components/Hlist";
+import HList from "../components/Hlist";
 import { useState } from "react";
 
 const Tv = () => {

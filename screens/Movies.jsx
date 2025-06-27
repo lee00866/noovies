@@ -9,6 +9,7 @@ import VMedia from "../components/VMedia";
 import HMedia from "../components/HMedia";
 import { moviesApi } from "../api";
 import Loader from "../components/Loader";
+import HList from "../components/Hlist";
 
 //const SCREEN_HEIGHT = Dimension.get("window").height와 같지만 아래의 경우 width도 추가할 수 있어서 아래가 낫다
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -43,33 +44,25 @@ const Movies = () => {
   const isDark = useColorScheme() === "dark";
   const backgroundColor = isDark ? BLACK_COLOR : "white";
 
-  const {
-    isLoading: nowPlayingLoading,
-    data: nowPlayingData,
-    isRefetching: isRefetchingNowPlaying,
-  } = useQuery({
+  const { isLoading: nowPlayingLoading, data: nowPlayingData } = useQuery({
     queryKey: ["movies", "nowPlaying"],
     queryFn: moviesApi.nowPlaying,
   });
-  const {
-    isLoading: upcomingLoading,
-    data: upcomingData,
-    isRefetching: isRefetchingUpcoming,
-  } = useQuery({
+  const { isLoading: upcomingLoading, data: upcomingData } = useQuery({
     queryKey: ["movies", "upcoming"],
     queryFn: moviesApi.upcoming,
   });
-  const {
-    isLoading: trendingLoading,
-    data: trendingData,
-    isRefetching: isRefetchingTrending,
-  } = useQuery({
+  const { isLoading: trendingLoading, data: trendingData } = useQuery({
     queryKey: ["movies", "trending"],
     queryFn: moviesApi.trending,
   });
+
   const queryClient = useQueryClient();
+  const [refreshing, setRefreshing] = useState(false);
   const onRefresh = async () => {
-    queryClient.refetchQueries(["movies"]);
+    setRefreshing(true);
+    await queryClient.refetchQueries(["movies"]);
+    setRefreshing(false);
   };
 
   const renderVMedia = ({ item }) => (
@@ -92,8 +85,6 @@ const Movies = () => {
   const movieKeyExtractor = (item) => item.id;
 
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
-  const refreshing =
-    isRefetchingNowPlaying || isRefetchingUpcoming || isRefetchingTrending;
 
   return loading ? (
     <Loader />
@@ -128,21 +119,9 @@ const Movies = () => {
               />
             ))}
           </Swiper>
-          <ListContainer>
-            <ListTitle>Trending Movies</ListTitle>
-
-            {trendingData ? (
-              <TrendingScroll
-                data={trendingData.results}
-                horizontal
-                keyExtractor={movieKeyExtractor}
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingHorizontal: 20 }}
-                ItemSeparatorComponent={VSeparator}
-                renderItem={renderVMedia}
-              />
-            ) : null}
-          </ListContainer>
+          {trendingData ? (
+            <HList title="Trending Movies" data={trendingData.results} />
+          ) : null}
           <ComingSoonTitle>Coming Soon</ComingSoonTitle>
         </>
       }

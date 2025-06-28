@@ -1,5 +1,12 @@
 import { useEffect } from "react";
-import { Dimensions, StyleSheet, Linking } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  Linking,
+  Share,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
 import styled from "styled-components/native";
 import Poster from "../components/Poster";
 import { makeImgPath } from "../utils";
@@ -75,12 +82,49 @@ const Detail = ({ navigation: { setOptions }, route: { params } }) => {
     queryKey: [isMovie ? "movies" : "tv", params.id],
     queryFn: isMovie ? moviesApi.detail : tvApi.detail,
   });
+  const shareMedia = async () => {
+    const homepage = isMovie
+      ? `https://www.imdb.com/title/${data.imdb_id}`
+      : data.homepage;
+    const isAndroid = Platform.OS === "android";
+    if (isAndroid) {
+      await Share.share({
+        message: `${params.overview}\n Check it out: ${homepage}`,
+        title:
+          "original_title" in params
+            ? params.original_title
+            : params.original_name,
+      });
+    } else {
+      await Share.share({
+        url: homepage,
+        title:
+          "original_title" in params
+            ? params.original_title
+            : params.original_name,
+      });
+    }
+  };
+  const ShareButton = () => (
+    <TouchableOpacity onPress={shareMedia}>
+      <Ionicons name="share-outline" color="white" size={24} />
+    </TouchableOpacity>
+  );
 
   useEffect(() => {
     setOptions({
       title: "original_title" in params ? "Movie" : "TV Show",
+      headerRight: () => <ShareButton />,
     });
   }, []);
+
+  useEffect(() => {
+    if (data) {
+      setOptions({
+        headerRight: () => <ShareButton />,
+      });
+    }
+  }, [data]);
 
   //유저를 앱에 머물게하고싶다면 expo-web-browser를 설치해서 주석을 풀고 실행한다
   const openYTLink = async (videoID) => {

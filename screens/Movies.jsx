@@ -65,23 +65,6 @@ const Movies = () => {
     setRefreshing(false);
   };
 
-  const renderVMedia = ({ item }) => (
-    <VMedia
-      posterPath={item.poster_path}
-      originalTitle={item.original_title}
-      voteAverage={item.vote_average}
-    />
-  );
-
-  const renderHMedia = ({ item }) => (
-    <HMedia
-      posterPath={item.poster_path}
-      originalTitle={item.original_title}
-      overview={item.overview}
-      releaseDate={item.release_date}
-    />
-  );
-
   const movieKeyExtractor = (item) => item.id;
 
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
@@ -116,6 +99,7 @@ const Movies = () => {
                 originalTitle={movie.original_title}
                 overview={movie.overview}
                 voteAverage={movie.vote_average}
+                fullData={movie}
               />
             ))}
           </Swiper>
@@ -128,7 +112,16 @@ const Movies = () => {
       data={upcomingData.results}
       keyExtractor={movieKeyExtractor}
       ItemSeparatorComponent={HSeparator}
-      renderItem={renderHMedia}
+      renderItem={({ item }) => (
+        <HMedia
+          posterPath={item.poster_path}
+          originalTitle={item.original_title}
+          overview={item.overview}
+          releaseDate={item.release_date}
+          voteAverage={item.vote_average}
+          fullData={item}
+        />
+      )}
     />
   ) : null;
 };
